@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Skill Gap Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 400px;
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        code {
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Skill Gap Analysis</h1>
+        <p>Enter your skills below to see job matches.<br>
+        Backend API running at <code>http://127.0.0.1:5000</code></p>
+
+        <form id="skillForm">
+            <input type="text" id="skillsInput" placeholder="e.g. Python, SQL, Flask" required />
+            <button type="submit">Analyze</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('skillForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const skills = document.getElementById('skillsInput').value;
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ skills })
+                });
+
+                if (!response.ok) {
+                    throw new Error("CORS or server error");
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    // Redirect with encoded candidate and result data
+                    const candidate = encodeURIComponent(data.candidate);
+                    const results = encodeURIComponent(JSON.stringify(data.best_matches));
+                    window.location.href = `results.html?candidate=${candidate}&results=${results}`;
+                }
+            } catch (error) {
+                console.error(error);
+                alert("⚠️ Request failed. Is the Flask server running with CORS enabled?");
+            }
+        });
+    </script>
+</body>
+</html>

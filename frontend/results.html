@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Skill Gap Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f0f2f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #007bff;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Skill Gap Analysis Result</h2>
+        <p id="candidateInfo"></p>
+        <ul id="resultList"></ul>
+        <a href="index.html">🔙 Run Another Analysis</a>
+    </div>
+
+    <script>
+        function getQueryParam(key) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(key);
+        }
+
+        const candidate = getQueryParam("candidate");
+        const results = JSON.parse(decodeURIComponent(getQueryParam("results") || "[]"));
+
+        document.getElementById("candidateInfo").textContent = `Best job matches for: ${candidate}`;
+
+        const list = document.getElementById("resultList");
+        results.forEach(match => {
+            const li = document.createElement("li");
+            li.innerHTML = `<strong>${match.job}</strong> — Match Score: ${match.match_score}%`;
+            list.appendChild(li);
+        });
+    </script>
+</body>
+</html>
